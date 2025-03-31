@@ -1,0 +1,15 @@
+{
+  "eslint.codeActionsOnSave.rules": null,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "vue.autoInsert.dotValue": true,
+  "vue.complete.casing.tags": "kebab",
+  "vue.inlayHints.missingProps": true,
+  "vue.inlayHints.optionsWrapper": true,
+  "vue.complete.casing.props": "kebab",
+  "vue.splitEditors.icon": true,
+  "vue.updateImportsOnFileMove.enabled": true
+}
