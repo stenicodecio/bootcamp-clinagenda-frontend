@@ -1,6 +1,9 @@
 import axios, { type Method } from 'axios'
+import { useToastStore } from '@/stores'
 
 const API_URL = import.meta.env.VITE_BASE_HOST
+
+const toastStore = useToastStore()
 
 const axiosInstance = axios.create({
   baseURL: API_URL
@@ -22,14 +25,29 @@ export default async function request<T, R>({
   endpoint,
   body
 }: RequestOptions<T>): Promise<CustomResponse<R>> {
-  const response = await axiosInstance.request<R>({
-    method,
-    url: endpoint,
-    ...(method === 'GET' ? { params: body } : { data: body })
-  })
+  try {
+    const response = await axiosInstance.request<R>({
+      method,
+      url: endpoint,
+      ...(method === 'GET' ? { params: body } : { data: body })
+    })
 
-  return {
-    isError: response.statusText !== 'OK',
-    data: response.data
+    return {
+      isError: false,
+      data: response.data
+    }
+  } catch (error) {
+    toastStore.setToast({
+      type: 'error',
+      text: error instanceof Error ? error.message : 'Erro desconhecido'
+    })
+
+    console.error(`Erro no request [${method}] ${endpoint}`, body)
+    console.error(error)
+
+    return {
+      isError: true,
+      data: null as R
+    }
   }
 }
