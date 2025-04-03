@@ -3,7 +3,8 @@ import { DefaultTemplate } from '@/template'
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
+    <template #title>Meu dashboard</template>
     <template #default>
       <div class="dashboard">
         <svg
@@ -945,7 +946,7 @@ import { DefaultTemplate } from '@/template'
         </svg>
       </div>
     </template>
-  </DefaultTemplate>
+  </default-template>
 </template>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useSlots } from 'vue'
 import ClinicToast from '@/components/ClinicToast.vue'
-import { mdiAccountTag, mdiHome, mdiLogout } from '@mdi/js'
+import { mdiAccountTag, mdiHome, mdiLogout, mdiShapeOutline } from '@mdi/js'
 
 const drawer = ref(true)
 
@@ -15,6 +15,11 @@ const menus = ref([
     title: 'Status',
     icon: mdiAccountTag,
     to: { name: 'status-list' }
+  },
+  {
+    title: 'Especialidades',
+    icon: mdiShapeOutline,
+    to: { name: 'specialty-list' }
   }
 ])
 
@@ -51,9 +56,7 @@ const contentClass = computed(() => {
   <v-main>
     <div class="pa-6">
       <div class="header">
-        <div class="header__title text-h4">
-          <slot name="title" />
-        </div>
+        <div class="header__title text-h4"><slot name="title" /></div>
         <div class="header__action">
           <slot name="action" />
         </div>
