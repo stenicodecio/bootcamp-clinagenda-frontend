@@ -1,6 +1,6 @@
 export interface ISpecialty {
   id: number
-  name: number
+  name: string
   scheduleDuration: string
 }
 

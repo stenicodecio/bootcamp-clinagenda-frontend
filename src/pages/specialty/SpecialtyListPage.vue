@@ -12,7 +12,7 @@ import { useToastStore } from '@/stores'
 
 const toastStore = useToastStore()
 const isLoadingList = ref<boolean>(false)
-const filterName = ref<GetSpecialtyListRequest['name']>(0)
+const filterName = ref<GetSpecialtyListRequest['name']>('')
 const itemsPerPage = ref<number>(10)
 const total = ref<number>(0)
 const page = ref<number>(1)
