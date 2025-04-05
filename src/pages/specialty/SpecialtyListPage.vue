@@ -12,7 +12,7 @@ import { useToastStore } from '@/stores'
 
 const toastStore = useToastStore()
 const isLoadingList = ref<boolean>(false)
-const filterName = ref<GetSpecialtyListRequest['name']>('')
+const filterName = ref<GetSpecialtyListRequest['name']>(0)
 const itemsPerPage = ref<number>(10)
 const total = ref<number>(0)
 const page = ref<number>(1)
@@ -79,6 +79,21 @@ const deleteListItem = async (item: ISpecialty) => {
     text: 'Especialidade deletada com sucesso!'
   })
 
+  toastStore.setToast({
+    type: 'success',
+    text: 'Especialidade deletada com sucesso!'
+  })
+
+  toastStore.setToast({
+    type: 'success',
+    text: 'Especialidade deletada com sucesso!'
+  })
+
+  toastStore.setToast({
+    type: 'success',
+    text: 'Especialidade deletada com sucesso!'
+  })
+
   loadDataTable()
 }
 </script>
@@ -116,7 +131,9 @@ const deleteListItem = async (item: ISpecialty) => {
         item-value="id"
         @update:options="handleDataTableUpdate"
       >
-        <template #[`item.scheduleDuration`]="{ item }"> {{ item.scheduleDuration }} min </template>
+        <template #[`item.scheduleDuration`]="{ item }">
+          {{ item.scheduleDuration }} mininutos
+        </template>
         <template #[`item.actions`]="{ item }">
           <v-tooltip text="Deletar especialidade" location="left">
             <template #activator="{ props }">

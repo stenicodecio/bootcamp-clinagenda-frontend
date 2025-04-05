@@ -41,7 +41,6 @@ const submitForm = async () => {
   })
 
   router.push({ name: 'status-list' })
-
   isLoadingForm.value = false
 }
 
