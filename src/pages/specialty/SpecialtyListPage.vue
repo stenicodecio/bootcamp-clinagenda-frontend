@@ -79,21 +79,6 @@ const deleteListItem = async (item: ISpecialty) => {
     text: 'Especialidade deletada com sucesso!'
   })
 
-  toastStore.setToast({
-    type: 'success',
-    text: 'Especialidade deletada com sucesso!'
-  })
-
-  toastStore.setToast({
-    type: 'success',
-    text: 'Especialidade deletada com sucesso!'
-  })
-
-  toastStore.setToast({
-    type: 'success',
-    text: 'Especialidade deletada com sucesso!'
-  })
-
   loadDataTable()
 }
 </script>
