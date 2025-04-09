@@ -18,7 +18,8 @@ const id = route.params.id
 const pageMode = id ? PageMode.PAGE_UPDATE : PageMode.PAGE_INSERT
 
 const form = ref<SpecialtyForm>({
-  name: ''
+  name: '',
+  scheduleDuration: ''
 })
 
 const pageTitle = computed(() => {
