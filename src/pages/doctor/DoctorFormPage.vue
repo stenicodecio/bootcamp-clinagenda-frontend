@@ -89,6 +89,11 @@ const loadForm = async () => {
 
     if (pageMode === PageMode.PAGE_UPDATE) {
       form.value = doctorFormResponse.data
+
+      form.value.statusId = doctorFormResponse.data.status.id
+      form.value.specialty = doctorFormResponse.data.specialty.map(
+        (specialty: ISpecialty) => specialty.id
+      )
     }
   } catch (e) {
     console.error('Erro ao buscar dados do formulário', e)
@@ -137,7 +142,7 @@ onMounted(() => {
         <v-col>
           <v-label>Especialidades</v-label>
           <v-checkbox
-            v-for="specialty of specialtyItems"
+            v-for="specialty in specialtyItems"
             :key="specialty.id"
             v-model="form.specialty"
             :label="specialty.name"

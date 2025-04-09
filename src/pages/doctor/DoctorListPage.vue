@@ -44,9 +44,9 @@ const headers = [
   }
 ]
 
-const handleDataTableUpdate = async ({ page: tablePage, itemsPerPage: tableItemsPerPage }: any) => {
-  page.value = tablePage
-  itemsPerPage.value = tableItemsPerPage
+const handleDataTableUpdate = async (tableOptions: any) => {
+  page.value = tableOptions.page
+  itemsPerPage.value = tableOptions.itemsPerPage
   loadDataTable()
 }
 

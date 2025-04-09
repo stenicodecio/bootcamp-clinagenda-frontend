@@ -6,7 +6,8 @@ import {
   mdiAccountTag,
   mdiHome,
   mdiLogout,
-  mdiShapeOutline
+  mdiShapeOutline,
+  mdiDoctor
 } from '@mdi/js'
 
 const drawer = ref(true)
@@ -31,6 +32,11 @@ const menus = ref([
     title: 'Pacientes',
     icon: mdiAccountInjuryOutline,
     to: { name: 'patient-list' }
+  },
+  {
+    title: 'Doctor',
+    icon: mdiDoctor,
+    to: { name: 'doctor-list' }
   }
 ])
 
