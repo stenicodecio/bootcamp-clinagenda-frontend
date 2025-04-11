@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { DefaultTemplate } from '@/template'
 import { mdiCancel, mdiPlusCircle } from '@mdi/js'
-import type { PatientForm } from '@/interfaces/patient'
+import type { GetPatientResponse, PatientForm } from '@/interfaces/patient'
 import type { IStatus, GetStatusListResponse } from '@/interfaces/status'
 import request from '@/engine/httpClient'
 import { useRoute } from 'vue-router'
@@ -82,7 +82,7 @@ const loadForm = async () => {
   const requests: Promise<any>[] = [statusRequest]
 
   if (pageMode === PageMode.PAGE_UPDATE) {
-    const patientFormRequest = request<undefined, PatientForm>({
+    const patientFormRequest = request<undefined, GetPatientResponse>({
       method: 'GET',
       endpoint: `patient/listById/${id}`
     })
@@ -98,6 +98,7 @@ const loadForm = async () => {
 
   if (pageMode === PageMode.PAGE_UPDATE) {
     form.value = patientFormResponse.data
+    form.value.statusId = patientFormResponse.data.id
   }
 
   isLoadingForm.value = false

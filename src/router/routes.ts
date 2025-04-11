@@ -67,5 +67,21 @@ export const routes = [
     path: '/doctor/update/:id',
     name: 'doctor-update',
     component: () => import('@/pages/doctor/DoctorFormPage.vue')
+  },
+  // Appointment
+  {
+    path: '/appointment/list',
+    name: 'appointment-list',
+    component: () => import('@/pages/appointment/AppointmentListPage.vue')
+  },
+  {
+    path: '/appointment/insert',
+    name: 'appointment-insert',
+    component: () => import('@/pages/appointment/AppointmentFormPage.vue')
+  },
+  {
+    path: '/appointment/update/:id',
+    name: 'appointment-update',
+    component: () => import('@/pages/appointment/AppointmentFormPage.vue')
   }
 ]

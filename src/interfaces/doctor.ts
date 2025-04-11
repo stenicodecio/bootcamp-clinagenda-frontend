@@ -12,8 +12,8 @@ export type GetDoctorListRequest = {
   itemsPerPage: number
   page: number
   name: IDoctor['name']
-  specialtyId: ISpecialty['id'] | null
-  statusId: IStatus['id'] | null
+  specialtyId?: ISpecialty['id'] | null
+  statusId?: IStatus['id'] | null
 }
 
 export type GetDoctorListResponse = {

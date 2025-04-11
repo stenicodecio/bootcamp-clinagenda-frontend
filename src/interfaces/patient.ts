@@ -22,6 +22,14 @@ export type GetPatientListResponse = {
   items: IPatient[]
 }
 
+export type GetPatientResponse = {
+  name: IPatient['name']
+  documentNumber: IPatient['documentNumber']
+  phoneNumber: IPatient['phoneNumber']
+  birthDate: IPatient['birthDate']
+  statusId: IStatus
+}
+
 export type PatientForm = {
   name: IPatient['name']
   documentNumber: IPatient['documentNumber']
