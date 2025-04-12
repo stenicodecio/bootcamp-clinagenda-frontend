@@ -27,7 +27,7 @@ yarn dev
 
 O servidor estará disponível em http://localhost:3000
 
-### Rodando com mock de backend
+# Rodando com mock de backend
 
 > ⚠️ Algumas funcionalidades podem não estar 100% cobertas pelo mock
 
@@ -39,7 +39,7 @@ yarn dev:mock
 
 Ao abrir o sistema, deverá ter um alerta no topo da tela indicando que o mock está ativo.
 
-### Gerando o build para produção
+# Gerando o build para produção
 
 Para gerar uma versão do projeto pronta para produção, utilize:
 
