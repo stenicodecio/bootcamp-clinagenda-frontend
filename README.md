@@ -91,4 +91,4 @@ Tem vídeos curtos, longos, playlists, tutorial e cursos apenas por textos, enco
 
 ## **[Level 4]**
 
-Se você já estudou todos os leveis acima, você já deve saber quais são os próximos assuntos que deve estudar e focar 💙
+Se você já estudou todos os leveis acima, você já deve saber quais são os próximos assuntos que deve estudar e focar. Boa jornada 💙
