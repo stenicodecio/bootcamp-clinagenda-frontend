@@ -12,7 +12,7 @@ import type { IPatient } from '@/interfaces/patient'
 import type { IDoctor } from '@/interfaces/doctor'
 import request from '@/engine/httpClient'
 import { useToastStore } from '@/stores'
-import { dateFormat, DateFormatEnum, maskDocumentNumber } from '@/utils'
+import { maskDocumentNumber } from '@/utils'
 
 const toastStore = useToastStore()
 
@@ -58,47 +58,40 @@ const handleDataTableUpdate = async ({ page: tablePage, itemsPerPage: tableItems
 }
 
 const loadDataTable = async () => {
-  try {
-    isLoadingList.value = true
-    const { isError, data } = await request<GetAppointmentListRequest, GetAppointmentListResponse>({
-      method: 'GET',
-      endpoint: 'appointment/list',
-      body: {
-        itemsPerPage: itemsPerPage.value,
-        page: page.value,
-        doctorName: filterDoctorName.value,
-        patientName: filterPatientName.value,
-        specialtyId: filterSpecialtyId.value
-      }
-    })
+  isLoadingList.value = true
+  const { isError, data } = await request<GetAppointmentListRequest, GetAppointmentListResponse>({
+    method: 'GET',
+    endpoint: 'appointment/list',
+    body: {
+      itemsPerPage: itemsPerPage.value,
+      page: page.value,
+      doctorName: filterDoctorName.value,
+      patientName: filterPatientName.value,
+      specialtyId: filterSpecialtyId.value
+    }
+  })
 
-    if (isError) return
+  isLoadingList.value = false
 
-    items.value = data.items
-    total.value = data.total
-    isLoadingList.value = false
-  } catch (e) {
-    console.error('Erro ao buscar item da lista', e)
-  }
+  if (isError) return
+
+  items.value = data.items
+  total.value = data.total
 }
 
 const loadFilters = async () => {
   isLoadingFilter.value = true
 
-  try {
-    const specialtyResponse = await request<undefined, GetSpecialtyListResponse>({
-      method: 'GET',
-      endpoint: 'specialty/list'
-    })
-
-    if (specialtyResponse.isError) return
-
-    specialtyItems.value = specialtyResponse.data.items
-  } catch (e) {
-    console.error('Erro ao buscar items do filtro', e)
-  }
+  const specialtyResponse = await request<undefined, GetSpecialtyListResponse>({
+    method: 'GET',
+    endpoint: 'specialty/list'
+  })
 
   isLoadingFilter.value = false
+
+  if (specialtyResponse.isError) return
+
+  specialtyItems.value = specialtyResponse.data.items
 }
 
 const deleteListItem = async (item: IAppointment) => {
@@ -108,23 +101,19 @@ const deleteListItem = async (item: IAppointment) => {
 
   if (!shouldDelete) return
 
-  try {
-    const response = await request<null, null>({
-      method: 'DELETE',
-      endpoint: `appointment/${item.id}`
-    })
+  const response = await request<null, null>({
+    method: 'DELETE',
+    endpoint: `appointment/delete/${item.id}`
+  })
 
-    if (response.isError) return
+  if (response.isError) return
 
-    toastStore.setToast({
-      type: 'success',
-      text: 'Agendamento deletado com sucesso!'
-    })
+  toastStore.setToast({
+    type: 'success',
+    text: 'Agendamento deletado com sucesso!'
+  })
 
-    loadDataTable()
-  } catch (e) {
-    console.error('Falha ao deletar item da lista', e)
-  }
+  loadDataTable()
 }
 
 onMounted(() => {
@@ -133,7 +122,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title> Lista de agendamentos </template>
 
     <template #action>
@@ -162,6 +151,7 @@ onMounted(() => {
                 item-title="name"
                 clearable
                 hide-details
+                @click:clear="loadDataTable"
               />
             </v-col>
             <v-col cols="auto" class="d-flex align-center">
@@ -187,9 +177,6 @@ onMounted(() => {
           <v-chip>
             {{ item.specialty.name }}
           </v-chip>
-        </template>
-        <template #[`item.appointmentDate`]="{ item }">
-          {{ dateFormat(item.appointmentDate, DateFormatEnum.FullDateAndTime.value) }}
         </template>
         <template #[`item.actions`]="{ item }">
           <v-tooltip text="Deletar agendamento" location="left">
@@ -218,5 +205,5 @@ onMounted(() => {
         </template>
       </v-data-table-server>
     </template>
-  </DefaultTemplate>
+  </default-template>
 </template>

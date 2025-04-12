@@ -50,6 +50,8 @@ const slots = useSlots()
 const contentClass = computed(() => {
   return slots.action || slots.title ? 'pt-4' : ''
 })
+
+const isMock = import.meta.env.VITE_USE_MOCK === 'true'
 </script>
 
 <template>
@@ -58,6 +60,11 @@ const contentClass = computed(() => {
 
     <v-toolbar-title>ClinAgenda</v-toolbar-title>
 
+    <div>
+      <v-alert v-if="isMock" color="warning" icon="$warning" density="compact">
+        MOCK ATIVADO
+      </v-alert>
+    </div>
     <v-spacer />
 
     <v-btn :icon="mdiLogout" variant="text" />

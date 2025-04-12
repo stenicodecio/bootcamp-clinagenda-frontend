@@ -1,17 +1,16 @@
 import App from './App.vue'
 import { createApp } from 'vue'
-// import { makeServer } from './engine/mock'
 import vuetify from '@/engine/vuetify'
 import router from '@/router'
 import { createPinia } from 'pinia'
-// import { vMaska } from 'maska/vue'
+import makeServer from './engine/mock'
 
 const app = createApp(App)
 
 // Mock server
-// if (import.meta.env.MODE === 'development') {
-//   makeServer()
-// }
+if (import.meta.env.VITE_USE_MOCK === 'true') {
+  makeServer()
+}
 
 // Register plugins
 const pinia = createPinia()

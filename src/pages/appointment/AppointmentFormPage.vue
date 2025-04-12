@@ -11,7 +11,7 @@ import { useRoute } from 'vue-router'
 import { PageMode } from '@/enum'
 import { useToastStore } from '@/stores'
 import router from '@/router'
-import { dateFormat, DateFormatEnum, normalize, timeMask } from '@/utils'
+import { dateFormat, DateFormatEnum, documentNumberMask, timeMask } from '@/utils'
 import { vMaska } from 'maska/vue'
 import ClinDatePicker from '@/components/ClinDatePicker.vue'
 
@@ -30,7 +30,7 @@ const form = ref<AppointmentForm>({
   appointmentDate: '',
   observation: ''
 })
-const date = ref<string>()
+const date = ref<Date>()
 const time = ref<string>()
 
 let debounceTimeout: number | null = null
@@ -43,19 +43,15 @@ const patientSelected = ref<IPatient | null>(null)
 
 const requestAutocompletePatient = async (query: string) => {
   patientLoading.value = true
-  try {
-    const response = await request<{ name: string }, IPatient[]>({
-      method: 'GET',
-      endpoint: 'patient/autocomplete',
-      body: { name: query }
-    })
 
-    patientItems.value = [...response.data]
-  } catch (error) {
-    console.error('Erro ao buscar pacientes:', error)
-  } finally {
-    patientLoading.value = false
-  }
+  const response = await request<{ name: string }, IPatient[]>({
+    method: 'GET',
+    endpoint: 'patient/autocomplete',
+    body: { name: query }
+  })
+
+  patientItems.value = [...response.data]
+  patientLoading.value = false
 }
 
 watch(patientAutocomplete, (newValue) => {
@@ -69,6 +65,12 @@ watch(patientAutocomplete, (newValue) => {
   debounceTimeout = setTimeout(() => {
     requestAutocompletePatient(newValue)
   }, DEBOUNCE_TIME)
+})
+
+watch(patientSelected, (newPatientSelected) => {
+  if (newPatientSelected) {
+    form.value.patientId = newPatientSelected.id
+  }
 })
 
 const doctorAutocomplete = ref<string>('')
@@ -102,6 +104,12 @@ watch(doctorAutocomplete, (newValue) => {
   }, DEBOUNCE_TIME)
 })
 
+watch(doctorSelected, (newDoctorSelected) => {
+  if (newDoctorSelected) {
+    form.value.doctorId = newDoctorSelected.id
+  }
+})
+
 const specialtyItems = ref<ISpecialty[]>([])
 
 const pageTitle = computed(() => {
@@ -111,10 +119,18 @@ const pageTitle = computed(() => {
 const submitForm = async () => {
   isLoadingForm.value = true
 
+  const body = {
+    ...form.value,
+    appointmentDate: `${dateFormat(
+      form.value.appointmentDate,
+      DateFormatEnum.FullDateAmerican.value
+    )} ${time.value}:00`
+  }
+
   const response = await request<AppointmentForm, null>({
     method: pageMode == PageMode.PAGE_INSERT ? 'POST' : 'PUT',
     endpoint: pageMode == PageMode.PAGE_INSERT ? 'appointment/insert' : `appointment/update/${id}`,
-    body: form.value
+    body
   })
 
   isLoadingForm.value = false
@@ -150,6 +166,8 @@ const loadForm = async () => {
 
   const [specialtyResponse, appointmentFormResponse] = await Promise.all(requests)
 
+  isLoadingForm.value = false
+
   if (specialtyResponse.isError || appointmentFormResponse?.isError) return
 
   specialtyItems.value = specialtyResponse.data
@@ -159,16 +177,17 @@ const loadForm = async () => {
       ...appointmentFormResponse.data,
       appointmentDate: dateFormat(
         appointmentFormResponse.data.appointmentDate,
+        DateFormatEnum.FullDateAmericanAndTime.value,
         DateFormatEnum.FullDateAndTime.value
       )
     }
 
-    date.value = form.value.appointmentDate.split(' ')[0]
-    time.value = form.value.appointmentDate.split(' ')[1].substring(0, 5)
+    const appointmentDateSplit = form.value.appointmentDate.split(' ')
+    date.value = new Date(`${appointmentDateSplit[0]} 12:00:00`)
+    time.value = appointmentDateSplit[1].substring(0, 5)
 
     loadAutocompleteData()
   }
-  isLoadingForm.value = false
 }
 
 const loadAutocompleteData = async () => {
@@ -188,25 +207,9 @@ const loadAutocompleteData = async () => {
   doctorSelected.value = doctorResponse.data
 }
 
-const filterItems = (value: string, query: string, item?: any) => {
-  return normalize(item.props.title).toLowerCase().includes(normalize(query))
-}
-
 watch([date, time], ([newDate, newTime]) => {
   const formattedDate = dateFormat(newDate, DateFormatEnum.FullDateAmerican.value)
   form.value.appointmentDate = `${formattedDate} ${newTime || ''}:00`
-})
-
-watch(patientSelected, (newPatientSelected) => {
-  if (newPatientSelected) {
-    form.value.patientId = newPatientSelected.id
-  }
-})
-
-watch(doctorSelected, (newDoctorSelected) => {
-  if (newDoctorSelected) {
-    form.value.doctorId = newDoctorSelected.id
-  }
 })
 
 onMounted(() => {
@@ -215,7 +218,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title>
       {{ pageTitle }}
     </template>
@@ -237,10 +240,8 @@ onMounted(() => {
             :items="patientItems"
             :loading="patientLoading"
             item-title="name"
-            item-value="id"
             label="Buscar paciente"
             placeholder="Digite um nome..."
-            :custom-filter="filterItems"
             no-data-text="Nenhum paciente encontrado"
             clearable
             return-object
@@ -250,6 +251,7 @@ onMounted(() => {
           <v-col cols="3">
             <v-text-field
               v-model.trim="patientSelected.documentNumber"
+              v-maska="documentNumberMask"
               label="CPF"
               hide-details
               disabled
@@ -273,7 +275,6 @@ onMounted(() => {
           </v-col>
         </template>
       </v-row>
-
       <div class="text-h6 mb-2 mt-12">Profissional</div>
       <v-row>
         <v-col cols="4">
@@ -282,12 +283,11 @@ onMounted(() => {
             v-model="doctorSelected"
             :items="doctorItems"
             :loading="doctorLoading"
-            :custom-filter="filterItems"
             item-title="name"
             item-value="id"
-            label="Buscar paciente"
+            label="Buscar profissional"
             placeholder="Digite um nome..."
-            no-data-text="Nenhum paciente encontrado"
+            no-data-text="Nenhum profissional encontrado"
             clearable
             return-object
           />
@@ -320,5 +320,5 @@ onMounted(() => {
         </v-col>
       </v-row>
     </v-form>
-  </DefaultTemplate>
+  </default-template>
 </template>

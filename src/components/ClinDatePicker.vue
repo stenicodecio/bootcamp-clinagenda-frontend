@@ -21,6 +21,8 @@ watch(
 const handleInput = (e: any) => {
   date.value = e.target.value
 
+  console.log(date.value)
+
   if (dateValidate(date.value, DateFormatEnum.FullDate.value)) {
     const americanDate = dateFormat(
       date.value,

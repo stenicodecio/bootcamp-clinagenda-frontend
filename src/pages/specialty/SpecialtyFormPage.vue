@@ -34,6 +34,8 @@ const submitForm = async () => {
     body: form.value
   })
 
+  isLoadingForm.value = false
+
   if (response.isError) return
 
   toastStore.setToast({
@@ -42,8 +44,6 @@ const submitForm = async () => {
   })
 
   router.push({ name: 'specialty-list' })
-
-  isLoadingForm.value = false
 }
 
 const loadForm = async () => {
@@ -56,10 +56,11 @@ const loadForm = async () => {
     endpoint: `specialty/update/${id}`
   })
 
+  isLoadingForm.value = false
+
   if (specialtyFormResponse?.isError) return
 
   form.value = specialtyFormResponse.data
-  isLoadingForm.value = false
 }
 
 onMounted(() => {
@@ -68,7 +69,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title>
       {{ pageTitle }}
     </template>
@@ -90,5 +91,5 @@ onMounted(() => {
         </v-col>
       </v-row>
     </v-form>
-  </DefaultTemplate>
+  </default-template>
 </template>

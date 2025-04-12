@@ -60,6 +60,8 @@ const submitForm = async () => {
     body
   })
 
+  isLoadingForm.value = false
+
   if (response.isError) return
 
   toastStore.setToast({
@@ -68,7 +70,6 @@ const submitForm = async () => {
   })
 
   router.push({ name: 'patient-list' })
-  isLoadingForm.value = false
 }
 
 const loadForm = async () => {
@@ -92,6 +93,8 @@ const loadForm = async () => {
 
   const [statusResponse, patientFormResponse] = await Promise.all(requests)
 
+  isLoadingForm.value = false
+
   if (statusResponse.isError || patientFormResponse?.isError) return
 
   statusItems.value = statusResponse.data.items
@@ -100,8 +103,6 @@ const loadForm = async () => {
     form.value = patientFormResponse.data
     form.value.statusId = patientFormResponse.data.id
   }
-
-  isLoadingForm.value = false
 }
 
 onMounted(() => {
@@ -110,7 +111,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title>
       {{ pageTitle }}
     </template>
@@ -167,5 +168,5 @@ onMounted(() => {
         </v-col>
       </v-row>
     </v-form>
-  </DefaultTemplate>
+  </default-template>
 </template>

@@ -55,11 +55,12 @@ const loadDataTable = async () => {
     }
   })
 
+  isLoadingList.value = false
+
   if (isError) return
 
   items.value = data.items
   total.value = data.total
-  isLoadingList.value = false
 }
 
 const deleteListItem = async (item: ISpecialty) => {
@@ -117,7 +118,7 @@ const deleteListItem = async (item: ISpecialty) => {
         @update:options="handleDataTableUpdate"
       >
         <template #[`item.scheduleDuration`]="{ item }">
-          {{ item.scheduleDuration }} mininutos
+          {{ item.scheduleDuration }} minutos
         </template>
         <template #[`item.actions`]="{ item }">
           <v-tooltip text="Deletar especialidade" location="left">

@@ -51,28 +51,25 @@ const handleDataTableUpdate = async (tableOptions: any) => {
 }
 
 const loadDataTable = async () => {
-  try {
-    isLoadingList.value = true
-    const { isError, data } = await request<GetDoctorListRequest, GetDoctorListResponse>({
-      method: 'GET',
-      endpoint: 'doctor/list',
-      body: {
-        itemsPerPage: itemsPerPage.value,
-        page: page.value,
-        name: filterName.value,
-        specialtyId: filterSpecialtyId.value,
-        statusId: filterStatusId.value
-      }
-    })
+  isLoadingList.value = true
+  const { isError, data } = await request<GetDoctorListRequest, GetDoctorListResponse>({
+    method: 'GET',
+    endpoint: 'doctor/list',
+    body: {
+      itemsPerPage: itemsPerPage.value,
+      page: page.value,
+      name: filterName.value,
+      specialtyId: filterSpecialtyId.value,
+      statusId: filterStatusId.value
+    }
+  })
 
-    if (isError) return
+  isLoadingList.value = false
 
-    items.value = data.items
-    total.value = data.total
-    isLoadingList.value = false
-  } catch (e) {
-    console.error('Erro ao buscar item da lista', e)
-  }
+  if (isError) return
+
+  items.value = data.items
+  total.value = data.total
 }
 
 const loadFilters = async () => {
@@ -88,18 +85,15 @@ const loadFilters = async () => {
     endpoint: 'status/list'
   })
 
-  try {
-    const [specialtyResponse, statusResponse] = await Promise.all([specialtyRequest, statusRequest])
-
-    if (specialtyResponse.isError || statusResponse.isError) return
-
-    specialtyItems.value = specialtyResponse.data.items
-    statusItems.value = statusResponse.data.items
-  } catch (e) {
-    console.error('Erro ao buscar items do filtro', e)
-  }
+  const [specialtyResponse, statusResponse] = await Promise.all([specialtyRequest, statusRequest])
 
   isLoadingFilter.value = false
+
+  if (specialtyResponse.isError || statusResponse.isError) return
+
+  console.log('- specialtyResponse', specialtyResponse)
+  specialtyItems.value = specialtyResponse.data.items
+  statusItems.value = statusResponse.data.items
 }
 
 const deleteListItem = async (item: IDoctor) => {
@@ -107,23 +101,19 @@ const deleteListItem = async (item: IDoctor) => {
 
   if (!shouldDelete) return
 
-  try {
-    const response = await request<null, null>({
-      method: 'DELETE',
-      endpoint: `doctor/${item.id}`
-    })
+  const response = await request<null, null>({
+    method: 'DELETE',
+    endpoint: `doctor/delete/${item.id}`
+  })
 
-    if (response.isError) return
+  if (response.isError) return
 
-    toastStore.setToast({
-      type: 'success',
-      text: 'Profissional deletado com sucesso!'
-    })
+  toastStore.setToast({
+    type: 'success',
+    text: 'Profissional deletado com sucesso!'
+  })
 
-    loadDataTable()
-  } catch (e) {
-    console.error('Falha ao deletar item da lista', e)
-  }
+  loadDataTable()
 }
 
 onMounted(() => {
@@ -132,7 +122,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title> Lista de profissionais </template>
 
     <template #action>
@@ -225,5 +215,5 @@ onMounted(() => {
         </template>
       </v-data-table-server>
     </template>
-  </DefaultTemplate>
+  </default-template>
 </template>

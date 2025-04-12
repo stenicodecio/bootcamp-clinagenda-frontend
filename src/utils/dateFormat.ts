@@ -5,12 +5,17 @@ type FormatTypes =
   | 'dd/MM/yy'
   | 'dd/MM/yyyy HH:mm'
   | 'yyyy-MM-dd'
+  | 'yyyy-MM-dd HH:mm'
   | 'dd/MM/yyyy HH:mm:ss'
 
 export class DateFormatEnum {
   static readonly FullDate = new DateFormatEnum('FullDate', 'dd/MM/yyyy')
   static readonly FullDateShort = new DateFormatEnum('FullDateShort', 'dd/MM/yy')
   static readonly FullDateAmerican = new DateFormatEnum('FullDateAmerican', 'yyyy-MM-dd')
+  static readonly FullDateAmericanAndTime = new DateFormatEnum(
+    'FullDateAmerican',
+    'yyyy-MM-dd HH:mm'
+  )
   static readonly FullDateAndTime = new DateFormatEnum('FullDateAndTime', 'dd/MM/yyyy HH:mm')
   static readonly FullDateAndTimeWithSeconds = new DateFormatEnum(
     'FullDateAndTimeWithSeconds',
@@ -47,7 +52,7 @@ export const isDateToday = (date1: string) => {
 }
 
 export const dateFormat = (
-  date: string | undefined | null,
+  date: string | Date | undefined | null,
   dateFormat: FormatTypes,
   fromFormat?: FormatTypes
 ) => {
@@ -58,7 +63,7 @@ export const dateFormat = (
   }
 
   let dateToFormat: string | Date = date
-  if (fromFormat) {
+  if (fromFormat && typeof date === 'string') {
     dateToFormat = parse(date, fromFormat, new Date())
   }
 

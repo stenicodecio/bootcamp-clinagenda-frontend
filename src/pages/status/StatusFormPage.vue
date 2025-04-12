@@ -33,15 +33,16 @@ const submitForm = async () => {
     body: form.value
   })
 
+  isLoadingForm.value = false
+
   if (response.isError) return
 
   toastStore.setToast({
     type: 'success',
-    text: `Status ${pageMode == PageMode.PAGE_INSERT ? 'criada' : 'alterada'} com sucesso!`
+    text: `Status ${pageMode == PageMode.PAGE_INSERT ? 'criado' : 'alterado'} com sucesso!`
   })
 
   router.push({ name: 'status-list' })
-  isLoadingForm.value = false
 }
 
 const loadForm = async () => {
@@ -53,10 +54,11 @@ const loadForm = async () => {
     endpoint: `status/update/${id}`
   })
 
+  isLoadingForm.value = false
+
   if (statusFormResponse?.isError) return
 
   form.value = statusFormResponse.data
-  isLoadingForm.value = false
 }
 
 onMounted(() => {

@@ -32,27 +32,23 @@ const pageTitle = computed(() => {
 })
 
 const submitForm = async () => {
-  try {
-    isLoadingForm.value = true
-    const response = await request<DoctorForm, null>({
-      method: pageMode == PageMode.PAGE_INSERT ? 'POST' : 'PUT',
-      endpoint: pageMode == PageMode.PAGE_INSERT ? 'doctor/insert' : `doctor/update/${id}`,
-      body: form.value
-    })
+  isLoadingForm.value = true
+  const response = await request<DoctorForm, null>({
+    method: pageMode == PageMode.PAGE_INSERT ? 'POST' : 'PUT',
+    endpoint: pageMode == PageMode.PAGE_INSERT ? 'doctor/insert' : `doctor/update/${id}`,
+    body: form.value
+  })
 
-    if (response.isError) return
+  isLoadingForm.value = false
 
-    toastStore.setToast({
-      type: 'success',
-      text: `Profissional ${pageMode == PageMode.PAGE_INSERT ? 'criado' : 'alterado'} com sucesso!`
-    })
+  if (response.isError) return
 
-    router.push({ name: 'doctor-list' })
+  toastStore.setToast({
+    type: 'success',
+    text: `Profissional ${pageMode == PageMode.PAGE_INSERT ? 'criado' : 'alterado'} com sucesso!`
+  })
 
-    isLoadingForm.value = false
-  } catch (e) {
-    console.error('Erro ao salvar formulário', e)
-  }
+  router.push({ name: 'doctor-list' })
 }
 
 const loadForm = async () => {
@@ -79,26 +75,22 @@ const loadForm = async () => {
     requests.push(doctorFormRequest)
   }
 
-  try {
-    const [specialtyResponse, statusResponse, doctorFormResponse] = await Promise.all(requests)
+  const [specialtyResponse, statusResponse, doctorFormResponse] = await Promise.all(requests)
 
-    if (specialtyResponse.isError || statusResponse.isError || doctorFormResponse?.isError) return
+  isLoadingForm.value = false
 
-    specialtyItems.value = specialtyResponse.data.items
-    statusItems.value = statusResponse.data.items
+  if (specialtyResponse.isError || statusResponse.isError || doctorFormResponse?.isError) return
 
-    if (pageMode === PageMode.PAGE_UPDATE) {
-      form.value = doctorFormResponse.data
+  specialtyItems.value = specialtyResponse.data.items
+  statusItems.value = statusResponse.data.items
 
-      form.value.statusId = doctorFormResponse.data.status.id
-      form.value.specialty = doctorFormResponse.data.specialty.map(
-        (specialty: ISpecialty) => specialty.id
-      )
-    }
-  } catch (e) {
-    console.error('Erro ao buscar dados do formulário', e)
-  } finally {
-    isLoadingForm.value = false
+  if (pageMode === PageMode.PAGE_UPDATE) {
+    form.value = doctorFormResponse.data
+
+    form.value.statusId = doctorFormResponse.data.status.id
+    form.value.specialty = doctorFormResponse.data.specialty.map(
+      (specialty: ISpecialty) => specialty.id
+    )
   }
 }
 
@@ -108,7 +100,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title>
       {{ pageTitle }}
     </template>
@@ -151,5 +143,5 @@ onMounted(() => {
         </v-col>
       </v-row>
     </v-form>
-  </DefaultTemplate>
+  </default-template>
 </template>

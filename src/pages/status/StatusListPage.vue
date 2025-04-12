@@ -48,11 +48,12 @@ const loadDataTable = async () => {
     }
   })
 
+  isLoadingList.value = false
+
   if (isError) return
 
   items.value = data.items
   total.value = data.total
-  isLoadingList.value = false
 }
 
 const deleteListItem = async (item: IStatus) => {
@@ -69,7 +70,7 @@ const deleteListItem = async (item: IStatus) => {
 
   toastStore.setToast({
     type: 'success',
-    text: 'Status deletada com sucesso!'
+    text: 'Status deletado com sucesso!'
   })
 
   loadDataTable()

@@ -7,14 +7,7 @@ import type { IStatus, GetStatusListResponse } from '@/interfaces/status'
 import request from '@/engine/httpClient'
 import { useToastStore } from '@/stores'
 import { vMaska } from 'maska/vue'
-import {
-  clearMask,
-  dateFormat,
-  DateFormatEnum,
-  documentNumberMask,
-  maskDocumentNumber,
-  maskPhoneNumber
-} from '@/utils'
+import { clearMask, documentNumberMask, maskDocumentNumber, maskPhoneNumber } from '@/utils'
 
 const toastStore = useToastStore()
 
@@ -60,47 +53,40 @@ const handleDataTableUpdate = async ({ page: tablePage, itemsPerPage: tableItems
 }
 
 const loadDataTable = async () => {
-  try {
-    isLoadingList.value = true
-    const { isError, data } = await request<GetPatientListRequest, GetPatientListResponse>({
-      method: 'GET',
-      endpoint: 'patient/list',
-      body: {
-        itemsPerPage: itemsPerPage.value,
-        page: page.value,
-        name: filterName.value,
-        documentNumber: clearMask(filterDocumentNumber.value),
-        statusId: filterStatusId.value
-      }
-    })
+  isLoadingList.value = true
+  const { isError, data } = await request<GetPatientListRequest, GetPatientListResponse>({
+    method: 'GET',
+    endpoint: 'patient/list',
+    body: {
+      itemsPerPage: itemsPerPage.value,
+      page: page.value,
+      name: filterName.value,
+      documentNumber: clearMask(filterDocumentNumber.value),
+      statusId: filterStatusId.value
+    }
+  })
 
-    if (isError) return
+  isLoadingList.value = false
 
-    items.value = data.items
-    total.value = data.total
-    isLoadingList.value = false
-  } catch (e) {
-    console.error('Erro ao buscar item da lista', e)
-  }
+  if (isError) return
+
+  items.value = data.items
+  total.value = data.total
 }
 
 const loadFilters = async () => {
   isLoadingFilter.value = true
 
-  try {
-    const statusResponse = await request<undefined, GetStatusListResponse>({
-      method: 'GET',
-      endpoint: 'status/list'
-    })
-
-    if (statusResponse.isError) return
-
-    statusItems.value = statusResponse.data.items
-  } catch (e) {
-    console.error('Erro ao buscar items do filtro', e)
-  }
+  const statusResponse = await request<undefined, GetStatusListResponse>({
+    method: 'GET',
+    endpoint: 'status/list'
+  })
 
   isLoadingFilter.value = false
+
+  if (statusResponse.isError) return
+
+  statusItems.value = statusResponse.data.items
 }
 
 const deleteListItem = async (item: IPatient) => {
@@ -108,23 +94,19 @@ const deleteListItem = async (item: IPatient) => {
 
   if (!shouldDelete) return
 
-  try {
-    const response = await request<null, null>({
-      method: 'DELETE',
-      endpoint: `patient/${item.id}`
-    })
+  const response = await request<null, null>({
+    method: 'DELETE',
+    endpoint: `patient/delete/${item.id}`
+  })
 
-    if (response.isError) return
+  if (response.isError) return
 
-    toastStore.setToast({
-      type: 'success',
-      text: 'Paciente deletado com sucesso!'
-    })
+  toastStore.setToast({
+    type: 'success',
+    text: 'Paciente deletado com sucesso!'
+  })
 
-    loadDataTable()
-  } catch (e) {
-    console.error('Falha ao deletar item da lista', e)
-  }
+  loadDataTable()
 }
 
 onMounted(() => {
@@ -133,7 +115,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTemplate>
+  <default-template>
     <template #title> Lista de pacientes </template>
 
     <template #action>
@@ -222,5 +204,5 @@ onMounted(() => {
         </template>
       </v-data-table-server>
     </template>
-  </DefaultTemplate>
+  </default-template>
 </template>

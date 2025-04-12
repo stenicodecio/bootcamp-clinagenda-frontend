@@ -4,7 +4,6 @@ import { DefaultTemplate } from '@/template'
 
 <template>
   <default-template>
-    <template #title>Meu dashboard</template>
     <template #default>
       <div class="dashboard">
         <svg
